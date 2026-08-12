@@ -3,4 +3,97 @@
 import { FormEvent, useState } from "react";
 import { retrieveRag, type RetrievalResponse } from "@/lib/api";
 
-export default function RagDebugPage() { const [query, setQuery] = useState("第一食堂冷藏柜 A03 出现 E03 怎么处理？"); const [topK, setTopK] = useState(5); const [result, setResult] = useState<RetrievalResponse | null>(null); const [error, setError] = useState(""); async function submit(event: FormEvent) { event.preventDefault(); setError(""); try { setResult(await retrieveRag(query, topK)); } catch (reason) { setError(reason instanceof Error ? reason.message : "Retrieval failed"); } } const chunks = result?.chunks ?? []; return <main className="mx-auto min-h-screen max-w-5xl px-6 py-10"><a href="/" className="text-sm text-cyan-300">← Dashboard</a><header className="my-8"><p className="text-xs uppercase tracking-[.25em] text-cyan-300">RAG Observability</p><h1 className="mt-2 text-3xl font-semibold text-white">Retrieval Debug</h1><p className="mt-2 text-sm text-slate-400">Dense Vector Search · Cosine Similarity</p>{result && <p className="mt-2 text-xs text-cyan-300">Provider: {result.embedding_provider} · Model: {result.embedding_model} · Query: {result.query} · Top K: {result.top_k}</p>}</header><form onSubmit={submit} className="panel grid gap-4 p-5 md:grid-cols-[1fr_100px_auto]"><input value={query} onChange={event => setQuery(event.target.value)} className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm"/><input type="number" min={1} max={20} value={topK} onChange={event => setTopK(Number(event.target.value))} className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm"/><button className="rounded-xl bg-cyan-300 px-5 font-medium text-slate-950">Retrieve</button></form>{error && <p className="mt-4 text-rose-300">{error}</p>}<section className="mt-6 space-y-4">{chunks.map((chunk, index) => <article key={`${chunk.document_id}-${chunk.chunk_index}`} className="panel p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-sm text-white">#{index + 1} {chunk.filename}</h2><span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">Similarity {chunk.score.toFixed(4)}</span></div><div className="mt-2 text-xs text-slate-500">type={chunk.document_type} · page={chunk.page ?? "null"} · chunk={chunk.chunk_index} · document_id={chunk.document_id}</div><p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-300">{chunk.text}</p></article>)}</section></main>; }
+export default function RagDebugPage() {
+  const [query, setQuery] = useState("第一食堂冷藏柜 A03 出现 E03 怎么处理？");
+  const [topK, setTopK] = useState(5);
+  const [result, setResult] = useState<RetrievalResponse | null>(null);
+  const [error, setError] = useState("");
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setError("");
+    try {
+      setResult(await retrieveRag(query, topK));
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Retrieval failed");
+    }
+  }
+
+  const chunks = result?.chunks ?? [];
+
+  return (
+    <main className="mx-auto min-h-screen max-w-5xl px-6 py-10">
+      <a href="/" className="text-sm text-cyan-300">
+        ← Dashboard
+      </a>
+
+      <header className="my-8">
+        <p className="text-xs uppercase tracking-[.25em] text-cyan-300">
+          RAG Observability
+        </p>
+        <h1 className="mt-2 text-3xl font-semibold text-white">
+          Retrieval Debug
+        </h1>
+        <p className="mt-2 text-sm text-slate-400">
+          Dense Vector Search · Cosine Similarity
+        </p>
+        {result && (
+          <p className="mt-2 text-xs text-cyan-300">
+            Provider: {result.embedding_provider} · Model:{" "}
+            {result.embedding_model} · Query: {result.query} · Top K:{" "}
+            {result.top_k}
+          </p>
+        )}
+      </header>
+
+      <form
+        onSubmit={submit}
+        className="panel grid gap-4 p-5 md:grid-cols-[1fr_100px_auto]"
+      >
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm"
+        />
+        <input
+          type="number"
+          min={1}
+          max={20}
+          value={topK}
+          onChange={(event) => setTopK(Number(event.target.value))}
+          className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm"
+        />
+        <button className="rounded-xl bg-cyan-300 px-5 font-medium text-slate-950">
+          Retrieve
+        </button>
+      </form>
+
+      {error && <p className="mt-4 text-rose-300">{error}</p>}
+
+      <section className="mt-6 space-y-4">
+        {chunks.map((chunk, index) => (
+          <article
+            key={`${chunk.document_id}-${chunk.chunk_index}`}
+            className="panel p-5"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-sm text-white">
+                #{index + 1} {chunk.filename}
+              </h2>
+              <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">
+                Similarity {chunk.score.toFixed(4)}
+              </span>
+            </div>
+            <div className="mt-2 text-xs text-slate-500">
+              type={chunk.document_type} · page={chunk.page ?? "null"} ·
+              chunk={chunk.chunk_index} · document_id={chunk.document_id}
+            </div>
+            <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-300">
+              {chunk.text}
+            </p>
+          </article>
+        ))}
+      </section>
+    </main>
+  );
+}
