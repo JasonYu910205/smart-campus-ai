@@ -1,6 +1,6 @@
 # SmartCampus AI Copilot
 
-智慧校园运维与供应链 AI Agent 平台，是一个面向 FDE / AI Application Engineer 面试展示的 production-oriented 项目。
+智慧校园运维与供应链 AI Agent 平台
 
 ## Background
 
