@@ -31,6 +31,18 @@ services:
       QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost:3000}
+      LLM_PROVIDER: ${LLM_PROVIDER:-deepseek}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.deepseek.com}
+      LLM_MODEL: ${LLM_MODEL:-}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-qwen}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-}
+      EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-}
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-smart_campus_knowledge}
+      RAG_CHUNK_SIZE: ${RAG_CHUNK_SIZE:-600}
+      RAG_CHUNK_OVERLAP: ${RAG_CHUNK_OVERLAP:-100}
+      RAG_TOP_K: ${RAG_TOP_K:-5}
     ports: ["8000:8000"]
     depends_on:
       postgres: {condition: service_healthy}
